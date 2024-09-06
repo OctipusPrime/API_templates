@@ -10,17 +10,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-API_KEY = "your_secret_api_key"
-API_KEY_NAME = "access_token"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
-
-async def get_api_key(api_key_header: str = Security(api_key_header)):
-    if api_key_header == API_KEY:
-        return api_key_header
-    else:
-        raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
-        )
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -43,7 +32,7 @@ async def hello(request: Request, name: str = Form(...)):
         return RedirectResponse(request.url_for("index"), status_code=status.HTTP_302_FOUND)
 
 @app.get('/api/weather', response_class=JSONResponse)
-async def get_weather(location: str, api_key: str = Depends(get_api_key)):
+async def get_weather(location: str):
     # Dummy weather data
     weather_data = {
         "location": location,
