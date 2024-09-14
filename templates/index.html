@@ -1,33 +1,61 @@
-<!doctype html>
-<html lang="en">
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-
-<head>
-  <title>Hello Azure - Python Quickstart</title>
-  <link rel="stylesheet" href="{{ url_for('static', path='bootstrap/css/bootstrap.min.css') }}">
-  <link rel="shortcut icon" href="{{ url_for('static', path='favicon.ico') }}">
-</head>
+<!DOCTYPE html>
 <html>
-
+<head>
+    <title>Developer Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .section { margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+    </style>
+</head>
 <body>
-  <main>
-    <div class="px-4 py-3 my-2 text-center">
-      <img class="d-block mx-auto mb-4" src="{{ url_for('static', path='images/azure-icon.svg') }}" alt="Azure Logo"
-        width="192" height="192" />
-      <h1 class="display-6 fw-bold text-primary">Welcome to Azure This text has been updated</h1>
-    </div>
-    <form method="post" action="{{ url_for('hello')}}">
-      <div class="col-md-6 mx-auto text-center">
-        <label for="name" class="form-label fw-bold fs-5">Could you please tell me your name?</label>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center align-items-center my-1">
-          <input type="text" class="form-control" id="name" name="name" style="max-width: 256px;">
-        </div>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center my-2">
-          <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">Say Hello</button>
-        </div>
-      </div>
-    </form>
-  </main>
-</body>
+    <h1>Developer Dashboard</h1>
 
+    <div class="section">
+        <h2>Deployment Information</h2>
+        <p><strong>Deployment Timestamp:</strong> {{ deployment_timestamp }}</p>
+        <p><strong>Version:</strong> {{ version }}</p>
+        <p><strong>Commit Hash:</strong> {{ commit_hash }}</p>
+    </div>
+
+    <div class="section">
+        <h2>API Endpoints</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for route in routes %}
+                <tr>
+                    <td>{{ route.method }}</td>
+                    <td>{{ route.path }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Service Health Status</h2>
+        <ul>
+            {% for service, status in health_status.items() %}
+            <li><strong>{{ service }}:</strong> {{ status }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Documentation</h2>
+        <ul>
+            <li><a href="/docs">Swagger UI</a></li>
+            <li><a href="/redoc">ReDoc</a></li>
+        </ul>
+    </div>
+</body>
 </html>

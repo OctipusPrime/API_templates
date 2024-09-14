@@ -5,7 +5,7 @@ url = "http://127.0.0.1:8000/check-key"
 
 # Define the headers
 headers = {
-    "X-API-Key": "xxx"
+    "X-API-Key": "My_god_why_is_this_so_hard"
 }
 
 # Define the payload
