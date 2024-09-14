@@ -1,7 +1,7 @@
 import requests
 
 # Define the API endpoint
-url = "http://127.0.0.1:8000/check-key"
+url = "https://api-training-sdlfjsdlfji.azurewebsites.net/check-key/"
 
 # Define the headers
 headers = {
@@ -17,5 +17,14 @@ params = {
 # Make the GET request
 response = requests.get(url, headers=headers, params=params)
 
-# Print the response
-print(response.json())
+# Check the response status code
+if response.status_code == 200:
+    try:
+        # Print the JSON response
+        print(response.json())
+    except requests.exceptions.JSONDecodeError:
+        print("Error decoding JSON response")
+        print(response.text)
+else:
+    print(f"Error: Received status code {response.status_code}")
+    print(response.text)
