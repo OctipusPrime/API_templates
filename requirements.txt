@@ -5,3 +5,4 @@ jinja2
 python-multipart
 azure-identity
 azure-keyvault-secrets
+openai

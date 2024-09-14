@@ -15,7 +15,7 @@ print(f"Creating a key in {keyVaultName} called '{keyName}' ...")
 rsa_key = client.create_rsa_key(keyName, size=2048)
 
 # print the key
-print(rsa_key.
+print(rsa_key)
 
 print(" done.")
 
