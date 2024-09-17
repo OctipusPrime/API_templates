@@ -9,6 +9,7 @@ import datetime
 import subprocess
 from functions import get_llm_response
 from contextlib import asynccontextmanager
+import os
 
 templates = Jinja2Templates(directory="templates")
 
@@ -25,8 +26,7 @@ async def lifespan(app: FastAPI):
     app.commit_hash = commit_hash
 
     # Initialize Azure Key Vault client
-    key_vault_name = "keyvault-123456132465A"
-    kv_uri = f"https://{key_vault_name}.vault.azure.net"
+    kv_uri =  os.environ["KEY_VAULT_URI"] # this env var was added to the web app in the bicep file
     credential = DefaultAzureCredential()
     client = SecretClient(vault_url=kv_uri, credential=credential)
     app.key_vault_client = client

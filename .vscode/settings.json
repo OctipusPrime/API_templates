@@ -35,6 +35,6 @@
         "./venv",
         "./.venv/lib/python3.9/site-packages"
     ],
-    "appService.defaultWebAppToDeploy": "/subscriptions/5f4c672a-6315-47d3-bd74-25680e9b3fb0/resourceGroups/API_test/providers/Microsoft.Web/sites/API-training-sdlfjsdlfji",
+    "appService.defaultWebAppToDeploy": "",
     "appService.deploySubpath": ".",
 }
