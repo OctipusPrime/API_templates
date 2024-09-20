@@ -1,7 +1,8 @@
 import requests
 
-# Define the API endpoint
-url = "https://api-training-sdlfjsdlfji.azurewebsites.net/check-key/"
+# Get local 
+#url = "http://127.0.0.1:8000/check-key"
+url = "https://webapp-e475evrkjp63o.azurewebsites.net/check-key"
 
 # Define the headers
 headers = {

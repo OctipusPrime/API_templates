@@ -35,6 +35,6 @@
         "./venv",
         "./.venv/lib/python3.9/site-packages"
     ],
-    "appService.defaultWebAppToDeploy": "",
+    "appService.defaultWebAppToDeploy": "None",
     "appService.deploySubpath": ".",
 }
