@@ -1,3 +1,11 @@
+"""
+Main FastAPI application
+"""
+
+import datetime
+import subprocess
+from contextlib import asynccontextmanager
+import os
 from openai import AzureOpenAI
 from fastapi import FastAPI, Query, Header, Request
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -5,11 +13,7 @@ from fastapi.templating import Jinja2Templates
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 import uvicorn
-import datetime
-import subprocess
 from functions import get_llm_response
-from contextlib import asynccontextmanager
-import os
 
 templates = Jinja2Templates(directory="templates")
 
@@ -18,7 +22,7 @@ async def lifespan(app: FastAPI):
     # Code to run before the application starts
     # Capture deployment timestamp
     app.deployment_timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
-    # Get Git commit hash
+    # Get Git commit hash so you can check if you are running new version
     try:
         commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
     except Exception:
@@ -32,19 +36,17 @@ async def lifespan(app: FastAPI):
     app.key_vault_client = client
 
     # Initialize OpenAI client
+    # The endpoint and key are stored in Azure Key Vault, you must add them there for the app to work
     oai_endpoint = client.get_secret("openai-endpoint").value
     oai_key = client.get_secret("openai-key").value
     oai_client = AzureOpenAI(api_key=oai_key, azure_endpoint=oai_endpoint, api_version="2024-05-01-preview")
     app.oai_client = oai_client
 
-    yield  # The application will run after this point
-
-    # Code to run after the application stops
-    # Clean up resources if necessary
-    # For example, closing any open connections
+    yield
 
 app = FastAPI(lifespan=lifespan)
 
+# Baseline route, this is what you see when you go to the root URL
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     app = request.app
@@ -80,6 +82,7 @@ async def read_root(request: Request):
     except Exception:
         health_status["OpenAI"] = "Unhealthy"
 
+    # Populate a prepared html template with gathered information
     return templates.TemplateResponse("index.html", {
         "request": request,
         "deployment_timestamp": deployment_timestamp,
@@ -89,16 +92,18 @@ async def read_root(request: Request):
         "health_status": health_status
     })
 
-@app.get("/check-key", response_class=JSONResponse)
-async def check_key(
+# Route to interact with the OpenAI model, ready for any other code to be added
+@app.get("/ask_gpt", response_class=JSONResponse)
+async def ask_gpt(
     request: Request,
     prompt: str = Query(..., description="Prompt to send to the OpenAI model"),
     key_name: str = Query(..., description="Name of the key to check in the Key Vault"),
+    # Header means the value will be sercret and not visible in the URL
     api_key: str = Header(..., alias="X-API-Key", description="API key to check against the Key Vault")
 ):
     app = request.app
     try:
-        # Fetch the secret from Azure Key Vault
+        # Check if the key matches the value in the Key Vault
         secret = app.key_vault_client.get_secret(key_name)
         if secret.value == api_key:
             messages = [

@@ -1,12 +1,22 @@
 import requests
+import os
+import sys
 
-# Get local 
-#url = "http://127.0.0.1:8000/check-key"
-url = "https://webapp-e475evrkjp63o.azurewebsites.net/check-key"
+# Check if the command-line argument is provided
+if len(sys.argv) != 2 or sys.argv[1] not in ["local", "cloud"]:
+    print("Usage: python testing_GPT_access.py [local|cloud]")
+    sys.exit(1)
+
+# Set the URL based on the command-line argument
+if sys.argv[1] == "local":
+    url = "http://127.0.0.1:8000/ask_gpt"
+elif sys.argv[1] == "cloud":
+    url = os.getenv("URL") + "/ask_gpt"
 
 # Define the headers
+secret = os.getenv("Test")
 headers = {
-    "X-API-Key": "My_god_why_is_this_so_hard"
+    "X-API-Key": secret
 }
 
 # Define the payload
